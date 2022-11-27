@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        body {
+            /*background:url(11.jpg) 0 0 no-repeat;*/
+        }
+
+        .wrapper {
+            margin: 50px;
+        }
+
+        .wrapper canvas {
+
+            /*border: 1px solid #f3f3f3;*/
+            border: 1px solid #f3f3f3;
+            border-radius: 40px;
+            box-shadow: 3px 5px 5px #c2c2c2;
+            margin-bottom: 16px;
+            background-color: #f8f8f8;
+
+        }
+
+        .wrapper .btn-list {
+            width: 1500px;
+            text-align: center;
+        }
+
+        .wrapper .btn-list li {
+            display: inline-block;
+            margin-left: 20px;
+
+        }
+        .wrapper .upload {
+            width: 200px;
+            margin-top: -159px;
+            text-align: center;
+
+        }
+
+        .wrapper .upload li {
+            display: inline-block;
+            /*margin-left: 100px;*/
+            font-size: 20px;
+            right: 20px;
+            line-height: 50px;
+            /*border: solid 1px cyan;*/
+            padding:5px;
+            margin:-10px;
+            text-decoration:none;
+            /*margin-top: ;*/
+        }
+
+        /*按键*/
+        .wrapper .btn-list li input {
+            background-color: #adadad;
+            width: 28px;
+            color: rgba(248, 247, 246, 0.97);
+            border: none;
+            padding: 10px 10px;
+            cursor: pointer;
+            border-radius: 50px;
+            font-size: 18px;
+            display: block;
+            box-shadow: 1px 2px 2px #c2c2c2;
+            transition-duration: 0.15s;
+        }
+        .wrapper .upload li input {
+            background-color: #adadad;
+            /*background-image: url(/djangoProject/templates/upload.png);*/
+            width: 50px;
+            margin-right: 100px;
+            /*background-size: 40px;*/
+            background-position: center;
+            color: rgba(248, 247, 246, 0.97);
+            border: none;
+            position: center;
+            padding: 10px 10px;
+            cursor: pointer;
+            border-radius: 100px;
+            font-size: 18px;
+            display: block;
+            box-shadow: 1px 2px 2px #c2c2c2;
+            transition-duration: 0.15s;
+        }
+        .wrapper .upload li label img{
+            background-color: #adadad;
+            /*background-image: url(/djangoProject/templates/upload.png);*/
+            width: 50px;
+            margin-right: 100px;
+            /*background-size: 40px;*/
+            background-position: center;
+            color: rgba(248, 247, 246, 0.97);
+            border: none;
+            position: center;
+            padding: 10px 10px;
+            cursor: pointer;
+            border-radius: 100px;
+            font-size: 18px;
+            display: block;
+            box-shadow: 1px 2px 2px #c2c2c2;
+            transition-duration: 0.15s;
+        }
+        .wrapper .btn-list li input:hover {
+            /*border-radius: 100px;*/
+
+            box-shadow: 0 10px 10px 0 rgba(161, 157, 157, 0.5);
+        }
+        .wrapper .upload li input:hover {
+            /*border: 2px solid #9a9999;*/
+            padding: 10px 20px;
+            /*border-block-width: 200px;*/
+            box-shadow: 0 10px 10px 0 rgba(161, 157, 157, 0.5);
+        }
+        .wrapper .upload li label img:hover {
+            /*border: 2px solid #9a9999;*/
+            padding: 10px 20px;
+            /*border-block-width: 200px;*/
+            box-shadow: 0 10px 10px 0 rgba(161, 157, 157, 0.5);
+        }
+    </style>
+    <script type="text/javascript">
+      function fileSelected() {
+        var file = document.getElementById('file').files[0];
+        if (file) {
+          var fileSize = 0;
+          if (file.size > 1024 * 1024)
+            fileSize = (Math.round(file.size * 100 / (1024 * 1024)) / 100).toString() + 'MB';
+          else
+            fileSize = (Math.round(file.size * 100 / 1024) / 100).toString() + 'KB';
+
+          document.getElementById('fileName').innerHTML = 'Name: ' + file.name;
+          document.getElementById('fileSize').innerHTML = 'Size: ' + fileSize;
+          document.getElementById('fileType').innerHTML = 'Type: ' + file.type;
+        }
+      }
+      function uploadProgress(evt) {
+        if (evt.lengthComputable) {
+          var percentComplete = Math.round(evt.loaded * 100 / evt.total);
+          document.getElementById('progressNumber').innerHTML = percentComplete.toString() + '%';
+        }
+        else {
+          document.getElementById('progressNumber').innerHTML = 'unable to compute';
+        }
+      }
+
+      function uploadComplete(evt) {
+        /* This event is raised when the server send back a response */
+        alert(evt.target.responseText);
+      }
+
+      function uploadFailed(evt) {
+        alert("There was an error attempting to upload the file.");
+      }
+
+      function uploadCanceled(evt) {
+        alert("The upload has been canceled by the user or the browser dropped the connection.");
+      }
+    </script>
+</head>
+
+<body>
+
+    <!--  div.wrapper>canvas+ul.btn-list>li*5>input-->
+    {% load static %}
+    <div class="wrapper">
+        <canvas class="cavs" width="1100" height="550" id="thecanvas"></canvas>
+
+        <ul class="btn-list">
+            <span><input class="easyui-color" type="color"  id="colorBoard"></span>
+            <a><input type="range" id="lineRuler" value="线条" min="2" max="30"></a>
+            <li><input type="image" id="cleanBoard" src="/static/clear.png"></li>
+            <li><input type="image" id="eraser" src="/static/eraser.png" ></li>
+            <li><input type="image" id="rescind" src="/static/rollback.png"></li>
+
+            <ul class="upload" style="padding-left: 1070px">
+            <span hidden><input type="image" id="saveImageBtn"></span>
+            <li><input type="image" id="downloadImageBtn" src="/static/download.png"></li>
+<!--            <span><input type="file" name="img" ></span>-->
+        </ul>
+            {% csrf_token %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+            <ul class="upload" style="padding-left: 1070px">
+
+            <li><label for="file" ><img src="/static/upload.png" ></label></li>
+            <input onchange="fileSelected();" id="file" name="img" type="file" accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf" multiple style="display: none">
+                <li>
+                    <label for="file" >
+                        <button style="height:60px;width: 60px; background-image: url('/static/up.png') ">上传
+{#                            <img src="/static/upload.png" height="50" width="50">#}
+                        </button>
+                        <strong style="color: red">{{ error }}</strong>
+                    </label>
+
+                </li>
+
+        </ul>
+    </form>
+         </ul>
+        <div id="fileName"></div>
+        <div id="fileSize"></div>
+        <div id="fileType"></div>
+        <div id="progressNumber"></div>
+    </div>
+
+
+</body>
+
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script>
+    var drawingLineObj = {
+        // backgroundColor:'#ff0202' ,
+        cavs: $('.cavs'),
+        // cavs: $('.cavs').get(0).fillStyle='#ff0202',
+        context: $('.cavs').get(0).getContext('2d'),
+        // context: $('.cavs').get(0).fillStyle='#ff0202',
+        colorBoard: $('#colorBoard'),
+        cleanBoard: $('#cleanBoard'),
+        arrImg: [],
+        eraser: $("#eraser"),
+        rescind: $('#rescind'),
+        lineRuler: $('#lineRuler'),
+        bool: false,
+        init: function () {
+            this.context.lineCap = 'round'; //线条起始与结尾样式
+            this.context.lineJoin = 'round'; //转弯
+            this.draw(); //画笔函数
+            this.btnFn(); //按钮函数
+        },
+
+        draw: function () {
+            var cavs = this.cavs,
+                self = this;
+            var c_x = cavs.offset().left, //canvas离左边的距离
+                c_y = cavs.offset().top; //canvas离上边的距离
+
+            cavs.mousedown(function (e) {
+                e = e || window.event;
+                self.bool = true;
+                var m_x = e.pageX - c_x, //鼠标点距离减去canvas离左边的距离等于画布点
+                    m_y = e.pageY - c_y; //鼠标点距离减去canvas离上边的距离等于画布点  落笔位置
+                self.context.beginPath();
+                self.context.moveTo(m_x, m_y);//鼠标在画布上的点
+                var imgData = self.context.getImageData(0, 0, self.cavs[0].width, self.cavs[0].height);
+                self.arrImg.push(imgData);
+                //console.log(self.arrImg);
+
+            })
+            cavs.mousemove(function (e) {
+                if (self.bool) { //定义一把锁，防止鼠标移开滑动
+                    self.context.lineTo(e.pageX - c_x, e.pageY - c_y);
+                    self.context.stroke(); //绘制出路径
+                }
+
+            })
+            cavs.mouseup(function () {
+                self.context.closePath(); //结束自动闭合
+                self.bool = false; //鼠标不移动时画笔断开
+
+            })
+            cavs.mouseleave(function () {
+                self.context.closePath(); //结束自动闭合
+                self.bool = false; //鼠标不移动时画笔断开
+
+
+            })
+
+
+        },
+        btnFn: function () {
+            var self = this;
+            $('.btn-list').on('click', function (e) {
+                e = e || window.event;
+                switch (e.target.id) { //target
+                    case 'cleanBoard':
+                        self.context.clearRect(0, 0, self.cavs[0].width, self.cavs[0].height) //[0]
+                        break
+                    case 'eraser':
+                        self.context.strokeStyle = '#f8f8f8'
+                        break
+                    case 'rescind':
+                        if (self.arrImg.length > 0) {
+                            self.context.putImageData(self.arrImg.pop(), 0, 0);
+                            break
+                        }
+
+                }
+            })
+            this.colorBoard.change(function (e) { //当颜色变化时改变字体的颜色
+                self.context.strokeStyle = $(this).val();
+            })
+
+            this.lineRuler.change(function (e) { //线条的变化值
+                self.context.lineWidth = $(this).val();
+            })
+
+        }
+
+
+    }
+
+
+  // Converts canvas to an image
+
+    drawingLineObj.init();
+ window.onload = function () {
+                draw();
+                var saveButton = document.getElementById("saveImageBtn");
+                bindButtonEvent(saveButton, "click", saveImageInfo);
+                var dlButton = document.getElementById("downloadImageBtn");
+                bindButtonEvent(dlButton, "click", saveAsLocalImage);
+            };
+            function draw() {
+                var canvas = document.getElementById("thecanvas");
+                // var ctx = canvas.getContext("2d");
+                // backgroundColor= '#f8f8f8;
+            }
+            function bindButtonEvent(element, type, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(type, handler, false);
+                } else {
+                    element.attachEvent('on' + type, handler);
+                }
+            }
+            function saveImageInfo() {
+                var mycanvas = document.getElementById("thecanvas");
+                var image = mycanvas.toDataURL("image/png");
+                var w = window.open('about:blank', 'image from canvas');
+                w.document.write("<img src='" + image + "' alt='from canvas'/>");
+            }
+            function saveAsLocalImage() {
+                var myCanvas = document.getElementById("thecanvas");
+                // here is the most important part because if you dont replace you will get a DOM 18 exception.
+                //var image = myCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream;Content-Disposition: attachment;filename=foobar.png");
+                const ctx = myCanvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, myCanvas.width, myCanvas.height);
+                for (let i = 0; i < imageData.data.length; i += 4) {
+                  // 当该像素是透明的，则设置成白色
+                       if (imageData.data[i + 3] === 0) {
+                        imageData.data[i] = 248;
+                        imageData.data[i + 1] = 248;
+                        imageData.data[i + 2] = 248;
+                        imageData.data[i + 3] = 248;
+                      }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                var image = myCanvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+
+
+
+                // var data=myCanvas.toDataURL();
+                // data=data.split(',')[1];
+                // data=window.atob(data);
+                // var ia = new Uint8Array(data.length);
+                // for (var i = 0; i < data.length; i++) {
+                //     ia[i] = data.charCodeAt(i);
+                // }
+                // var blob=new Blob([ia], {type:"image/png"});
+                // var fd=new FormData();
+                // fd.append('file',blob);
+                // $.ajax({
+                //     processData: false,
+                //     contentType: false,
+                //     url:"jdbc:mysql://localhost:3306",
+                //     type:"POST",
+                //     data: {
+                //         id: "2",
+                //         img_name: "wrnm",
+                //         img_path: "wcnmb",
+                //         data: fd
+                //     },
+                //      success:function (data) {
+                //         console.log("success");
+                //     },
+                //     error:function (err) {
+                //         console.log("error!!!!");
+                //     }
+                // });
+
+                // window.location.href = image; // it will save locally
+                // create temporary link
+                var tmpLink = document.createElement('a');
+                tmpLink.download = 'image.png'; // set the name of the download file
+                tmpLink.href = image;
+
+                // temporarily add link to body and initiate the download
+                document.body.appendChild(tmpLink);
+                tmpLink.click();
+                document.body.removeChild(tmpLink);
+            }
+
+</script>
+
+</html>

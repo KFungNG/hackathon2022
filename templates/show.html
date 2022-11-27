@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/templates/css/design.css" rel="stylesheet"/>
+    <title>展示照片</title>
+    <script src="/static/js/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        function dian(obj,idd){
+            const imgSrc = obj.src;
+            $('#showup').attr('src',imgSrc);
+            {#$('#uploader').innerHTML=obj.id;#}
+            {#$('#upload_time').attr('value',imgSrc);#}
+        }
+    </script>
+</head>
+<body style="overflow: clip">
+<h2 style="text-align: center;margin-bottom: 5px;margin-top: 5px">学的不仅是技术，更是梦想!</h2>
+<div id="header" style="height: 80px">
+    <div style="background-color:darkseagreen;height: 40px;padding: 20px; vertical-align: center">
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: red"
+           href="/test/draw">画板</a>
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: red"
+           href="/test/showPicture">笔记</a>
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: white"
+           href="/">高数</a>
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: white"
+           href="/">线代</a>
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: white"
+           href="/">C++</a>
+        <a style="margin: 20px;font-size: xx-large;text-decoration: none;color: white"
+           href="/">数据库</a>
+
+    </div>
+</div>
+<div>
+    <div id="menu" style="height:590px;width:320px;float:left; overflow:scroll;">
+        {% load static %}
+        {% for image in all_images %}
+            <img id="{{ image.uploader }}" src="/{{ image.img_path }}{{ image.img_name }}" height="150" width="300" onclick="dian(this)" alt="">
+            <h6 style="margin-top: 0;margin-bottom: 10px">upload time : </h6>
+        {% endfor %}
+    </div>
+    <div>
+        <div id="main"
+             style="padding-left:20px;padding-top: 20px;width: 900px;height:575px;float:left; background-color: #edff90">
+            <img src="/static/notedata/note.png" id="showup" height="500" width="890">
+        </div>
+        <div style="height:600px;width: 280px;float:left; background-color: lightskyblue;">
+            <h3 style="text-align: center">信息</h3>
+            <table style="margin: 40px; width: 200px" border="1">
+                <tr>
+                    {% load static %}
+                    <td>上传者</td>
+                    <td id="uploader"></td>
+                </tr>
+                <tr>
+                    <td>上传时间</td>
+                    <td id="upload_time"></td>
+                </tr>
+                <tr>
+                    <td>备注</td>
+                    <td>xxx</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>
